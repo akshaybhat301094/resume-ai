@@ -1,26 +1,58 @@
 @import "tailwindcss";
 
+@theme {
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui;
+  --font-display: var(--font-space-grotesk), sans-serif;
+  --font-mono: var(--font-space-mono), monospace;
+}
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --background: #F9F9F9;
+  --foreground: #000000;
+  --accent: #003BFF;
 }
 
 body {
-  background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--background);
+  font-family: var(--font-sans);
+  background-image: radial-gradient(#E0E0E0 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
+@layer base {
+  * {
+    @apply border-black outline-none;
+  }
+}
+
+.brutalist-border {
+  @apply border-2 border-black;
+}
+
+.brutalist-shadow {
+  box-shadow: 4px 4px 0px #000000;
+}
+
+.brutalist-shadow-sm {
+  box-shadow: 2px 2px 0px #000000;
+}
+
+.brutalist-card {
+  @apply bg-white border-2 border-black;
+  box-shadow: 4px 4px 0px #000000;
+}
+
+.brutalist-button-primary {
+  @apply bg-black text-white border-2 border-black px-6 py-2 uppercase font-mono font-bold transition-all active:translate-x-[2px] active:translate-y-[2px] active:shadow-none;
+  box-shadow: 4px 4px 0px #003BFF;
+}
+
+.brutalist-button-secondary {
+  @apply bg-white text-black border-2 border-black px-6 py-2 uppercase font-mono font-bold transition-all active:translate-x-[1px] active:translate-y-[1px] active:shadow-none;
+  box-shadow: 2px 2px 0px #000000;
+}
+
+.mono-label {
+  @apply font-mono text-[10px] uppercase font-bold tracking-tighter text-gray-500;
 }
