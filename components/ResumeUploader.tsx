@@ -1,15 +1,12 @@
 'use client'
 
 import { useState } from "react";
-import { saveResume, clearHistory } from '@/lib/localStorage';
-
-type Props = {
-    onResumeLoaded: (text: string, pdfUrl: string) => void
-}
+import useUIStore from '@/lib/store';
 
 type Status = 'idle' | 'loading' | 'done' | 'error';
 
-export default function ResumeUploader({ onResumeLoaded }: Props) {
+export default function ResumeUploader() {
+    const { setResumeData, clearChat, clearAnalysis } = useUIStore();
     const [status, setStatus] = useState<Status>('idle');
     const [fileName, setFileName] = useState<string>('');
 
@@ -38,9 +35,9 @@ export default function ResumeUploader({ onResumeLoaded }: Props) {
 
             if (res.ok) {
                 const pdfUrl = URL.createObjectURL(file);
-                saveResume(data.text);
-                clearHistory();
-                onResumeLoaded(data.text, pdfUrl);
+                setResumeData(data.text, pdfUrl);
+                clearChat();
+                clearAnalysis();
                 setStatus('done');
             } else {
                 setStatus('error');

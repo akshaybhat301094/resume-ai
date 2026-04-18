@@ -1,12 +1,15 @@
 'use client'
 
 import ResumeUploader from '@/components/ResumeUploader'
+import useUIStore from '@/lib/store';
 
-type Props = {
-    onResumeLoaded: (text: string, url: string) => void
-}
+export default function LandingPage() {
+    const { setResumeData } = useUIStore();
 
-export default function LandingPage({ onResumeLoaded }: Props) {
+    const handleResumeLoaded = (text: string, url: string) => {
+        setResumeData(text, url);
+    };
+
     return (
         <div className="flex-1 overflow-y-auto w-full">
             <div className="min-h-full flex flex-col items-center justify-center p-6 sm:p-12">
@@ -26,7 +29,7 @@ export default function LandingPage({ onResumeLoaded }: Props) {
                         </div>
                     </header>
 
-                    <ResumeUploader onResumeLoaded={onResumeLoaded} />
+                    <ResumeUploader onResumeLoaded={handleResumeLoaded} />
                 </div>
 
                 <footer className="mt-auto py-8 font-mono text-[10px] font-bold uppercase w-full max-w-xl flex-col sm:flex-row flex justify-between gap-2">
@@ -35,5 +38,5 @@ export default function LandingPage({ onResumeLoaded }: Props) {
                 </footer>
             </div>
         </div>
-    )
+    );
 }

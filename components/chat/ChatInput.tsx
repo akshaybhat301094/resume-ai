@@ -3,11 +3,11 @@
 type Props = {
     input: string
     setInput: (val: string) => void
-    onSend: () => void
+    sendMessage: () => void // Renamed from onSend to sendMessage for consistency
     isLoading: boolean
 }
 
-export default function ChatInput({ input, setInput, onSend, isLoading }: Props) {
+export default function ChatInput({ input, setInput, sendMessage, isLoading }: Props) {
     return (
         <div className="px-4 lg:px-8 py-6 lg:py-8 bg-white border-t-2 border-black bg-[radial-gradient(#F0F0F0_1px,transparent_1px)] bg-[length:16px_16px]">
             <div className="flex gap-2 lg:gap-4 items-center h-[48px] lg:h-[56px]">
@@ -21,7 +21,7 @@ export default function ChatInput({ input, setInput, onSend, isLoading }: Props)
                         onKeyDown={(e) => {
                             if (e.key === 'Enter' && !e.shiftKey) {
                                 e.preventDefault()
-                                onSend()
+                                sendMessage()
                             }
                         }}
                         placeholder="TERMINAL_PROMPT..."
@@ -29,7 +29,7 @@ export default function ChatInput({ input, setInput, onSend, isLoading }: Props)
                     />
                 </div>
                 <button 
-                    onClick={onSend}
+                    onClick={sendMessage}
                     disabled={isLoading || !input.trim()}
                     className="brutalist-button-primary px-3 lg:px-8 flex items-center gap-2 h-full relative group overflow-hidden shrink-0"
                 >

@@ -1,13 +1,9 @@
 'use client'
 
 import { IconResume, IconConsole, IconAnalysis } from '@/components/icons'
+import useUIStore from '@/lib/store';
 
 type Tab = 'preview' | 'chat' | 'analysis'
-
-type Props = {
-    activeTab: Tab
-    onTabChange: (tab: Tab) => void
-}
 
 type NavButtonProps = {
     tab: Tab
@@ -29,12 +25,14 @@ function NavButton({ tab, label, Icon, activeTab, onTabChange }: NavButtonProps)
     )
 }
 
-export default function MobileNav({ activeTab, onTabChange }: Props) {
+export default function MobileNav() {
+    const { activeTab, setActiveTab } = useUIStore();
+
     return (
         <div className="lg:hidden flex border-t-2 border-black bg-white shrink-0 z-50">
-            <NavButton tab="preview" label="Resume" Icon={IconResume} activeTab={activeTab} onTabChange={onTabChange} />
-            <NavButton tab="chat" label="Console" Icon={IconConsole} activeTab={activeTab} onTabChange={onTabChange} />
-            <NavButton tab="analysis" label="Analysis" Icon={IconAnalysis} activeTab={activeTab} onTabChange={onTabChange} />
+            <NavButton tab="preview" label="Resume" Icon={IconResume} activeTab={activeTab} onTabChange={setActiveTab} />
+            <NavButton tab="chat" label="Console" Icon={IconConsole} activeTab={activeTab} onTabChange={setActiveTab} />
+            <NavButton tab="analysis" label="Analysis" Icon={IconAnalysis} activeTab={activeTab} onTabChange={setActiveTab} />
         </div>
     )
 }

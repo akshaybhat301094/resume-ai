@@ -1,15 +1,18 @@
 'use client'
 
+import useUIStore from '@/lib/store';
+
 type Props = {
     onClearChat: () => void
-    onClearResume: () => void
     isAnalysisOpen: boolean
     onToggleAnalysis: () => void
     isPreviewOpen: boolean
     onTogglePreview: () => void
 }
 
-export default function ChatHeader({ onClearChat, onClearResume, isAnalysisOpen, onToggleAnalysis, isPreviewOpen, onTogglePreview }: Props) {
+export default function ChatHeader({ onClearChat, isAnalysisOpen, onToggleAnalysis, isPreviewOpen, onTogglePreview }: Props) {
+    const { clearResumeData } = useUIStore();
+
     return (
         <div className="flex items-center justify-between px-4 lg:px-8 py-4 lg:py-6 border-b-2 border-black bg-white h-auto lg:h-[88px]">
             <div className="flex items-center gap-2 lg:gap-3">
@@ -48,7 +51,7 @@ export default function ChatHeader({ onClearChat, onClearResume, isAnalysisOpen,
                     [CLEAR_LOG]
                 </button>
                 <button
-                    onClick={onClearResume}
+                    onClick={clearResumeData}
                     className="font-mono text-[10px] font-bold uppercase tracking-widest text-black/40 hover:text-[var(--accent)] hover:underline"
                 >
                     [NEW_RESUME]
@@ -58,7 +61,7 @@ export default function ChatHeader({ onClearChat, onClearResume, isAnalysisOpen,
             {/* Mobile Actions */}
             <div className="lg:hidden flex items-center gap-4">
                  <button
-                    onClick={onClearResume}
+                    onClick={clearResumeData}
                     className="font-mono text-[10px] font-bold uppercase tracking-widest text-black/40"
                 >
                     [NEW]

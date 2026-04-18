@@ -1,12 +1,10 @@
 'use client'
 
-type Props = {
-    url: string | null
-    text: string
-    onClose: () => void
-}
+import useUIStore from '@/lib/store';
 
-export default function ResumePreview({ url, text, onClose }: Props) {
+export default function ResumePreview() {
+    const { pdfUrl, resumeText, togglePreview } = useUIStore();
+
     return (
         <div className="w-full h-full flex flex-col bg-white border-r-2 border-black overflow-hidden">
             {/* Header */}
@@ -17,10 +15,10 @@ export default function ResumePreview({ url, text, onClose }: Props) {
                 </div>
                 <div className="flex items-center gap-4">
                     <span className="font-mono text-[7px] lg:text-[8px] font-bold text-gray-300 uppercase tracking-widest hidden sm:inline">
-                        {url ? 'STREAM: LIVE' : 'STATUS: OFFLINE'}
+                        {pdfUrl ? 'STREAM: LIVE' : 'STATUS: OFFLINE'}
                     </span>
                     <button 
-                        onClick={onClose}
+                        onClick={togglePreview}
                         className="hidden lg:flex w-8 h-8 border-2 border-black items-center justify-center font-mono text-xs font-black hover:bg-black hover:text-white transition-colors brutalist-shadow-sm"
                     >
                         ✕
@@ -30,9 +28,9 @@ export default function ResumePreview({ url, text, onClose }: Props) {
 
             {/* Content area */}
             <div className="flex-1 overflow-hidden bg-[#F9F9F9]">
-                {url ? (
+                {pdfUrl ? (
                     <iframe 
-                        src={`${url}#toolbar=0&navpanes=0&scrollbar=0`} 
+                        src={`${pdfUrl}#toolbar=0&navpanes=0&scrollbar=0`} 
                         className="w-full h-full border-none pointer-events-auto"
                         title="Resume Preview"
                     />
@@ -48,7 +46,7 @@ export default function ResumePreview({ url, text, onClose }: Props) {
                                 <span className="mono-label text-[8px]">Enc: UTF-8</span>
                             </div>
                             <pre className="whitespace-pre-wrap font-mono text-xs leading-relaxed text-gray-700">
-                                {text}
+                                {resumeText || 'No resume data available.'}
                             </pre>
                         </div>
                     </div>

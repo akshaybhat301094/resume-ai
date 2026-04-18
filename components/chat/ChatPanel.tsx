@@ -1,120 +1,54 @@
 'use client'
 
 import { useState, useRef, useEffect } from 'react'
-import { Message } from '@/types/chat'
-import { saveHistory, getHistory, clearHistory } from '@/lib/localStorage'
+import { saveHistory } from '@/lib/localStorage'
 import ChatHeader from './ChatHeader'
 import ChatMessage from './ChatMessage'
 import ChatInput from './ChatInput'
+import useUIStore from '@/lib/store';
 
-type Props = {
-    resumeText: string
-    onClearResume: () => void
-    isAnalysisOpen: boolean
-    onToggleAnalysis: () => void
-    isPreviewOpen: boolean
-    onTogglePreview: () => void
-}
+export default function ChatPanel() {
+    const {
+        messages,
+        isLoadingChat,
+        sendMessage,
+        clearChat,
+        isAnalysisOpen,
+        toggleAnalysis,
+        isPreviewOpen,
+        togglePreview,
+        resumeText,
+    } = useUIStore();
 
-export default function ChatPanel({ 
-    resumeText, 
-    onClearResume, 
-    isAnalysisOpen, 
-    onToggleAnalysis,
-    isPreviewOpen,
-    onTogglePreview
-}: Props) {
-    const [messages, setMessages] = useState<Message[]>(() => getHistory())
-    const [input, setInput] = useState('')
-    const [isLoading, setIsLoading] = useState(false)
-    const bottomRef = useRef<HTMLDivElement>(null)
+    const [input, setInput] = useState('');
+    const bottomRef = useRef<HTMLDivElement>(null);
 
     // Auto-scroll to bottom when messages change
     useEffect(() => {
-        bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
-    }, [messages])
+        bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
+    }, [messages]);
 
-    // Save history to localStorage whenever messages change
+    // Save messages to localStorage whenever they change
     useEffect(() => {
-        if (messages.length > 0) saveHistory(messages)
-    }, [messages])
-
-    async function sendMessage() {
-        const text = input.trim()
-        if (!text || isLoading) return
-
-        const userMessage: Message = { role: 'user', content: text }
-        const updatedMessages = [...messages, userMessage]
-        setMessages(updatedMessages)
-        setInput('')
-        setIsLoading(true)
-
-        const assistantMessage: Message = { role: 'assistant', content: '' }
-        setMessages([...updatedMessages, assistantMessage])
-
-        try {
-            const res = await fetch('/api/chat', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    messages: updatedMessages,
-                    resumeText,
-                }),
-            })
-
-            if (!res.ok) throw new Error('Chat request failed')
-            if (!res.body) throw new Error('No response body')
-
-            const reader = res.body.getReader()
-            const decoder = new TextDecoder()
-            let fullText = ''
-
-            while (true) {
-                const { done, value } = await reader.read()
-                if (done) break
-
-                const chunk = decoder.decode(value, { stream: true })
-                fullText += chunk
-
-                setMessages(prev => {
-                    const updated = [...prev]
-                    updated[updated.length - 1] = {
-                        role: 'assistant',
-                        content: fullText,
-                    }
-                    return updated
-                })
-            }
-
-        } catch (err) {
-            setMessages(prev => {
-                const updated = [...prev]
-                updated[updated.length - 1] = {
-                    role: 'assistant',
-                    content: 'ERROR: CONNECTION_INTERRUPTED. PLEASE_RETRY_TRANSMISSION.',
-                }
-                return updated
-            })
-        } finally {
-            setIsLoading(false)
+        if (messages.length > 0) {
+            saveHistory(messages);
         }
-    }
+    }, [messages]);
 
-    const clearChat = () => {
-        setMessages([])
-        clearHistory()
+    async function handleSendMessage() {
+        await sendMessage(input, resumeText);
+        setInput('');
     }
 
     return (
         <div className="flex flex-col h-full grow w-full bg-white relative">
             <div className="flex-none">
                 <ChatHeader 
-                    onClearChat={clearChat} 
-                    onClearResume={onClearResume}
+                    onClearChat={clearChat}
                     isAnalysisOpen={isAnalysisOpen}
-                    onToggleAnalysis={onToggleAnalysis}
+                    onToggleAnalysis={toggleAnalysis}
                     isPreviewOpen={isPreviewOpen}
-                    onTogglePreview={onTogglePreview}
+                    onTogglePreview={togglePreview}
                 />
             </div>
 
@@ -133,10 +67,12 @@ export default function ChatPanel({
                                 'What are my strongest skills?',
                                 'How can I improve my experience section?',
                                 'Am I a good fit for a senior engineer role?',
-                            ].map(suggestion => (
+                            ].map((suggestion) => (
                                 <button
                                     key={suggestion}
-                                    onClick={() => { setInput(suggestion); }}
+                                    onClick={() => {
+                                        setInput(suggestion);
+                                    }}
                                     className="brutalist-button-secondary text-left text-xs lowercase flex justify-between items-center group font-mono"
                                 >
                                     <span>{suggestion}</span>
@@ -150,23 +86,22 @@ export default function ChatPanel({
                 {messages.map((msg, i) => (
                     <ChatMessage 
                         key={i} 
-                        message={msg} 
-                        isLoading={isLoading} 
-                        isLast={i === messages.length - 1} 
+                        message={msg}
+                        isLoading={isLoadingChat}
+                        isLast={i === messages.length - 1}
                     />
                 ))}
-
                 <div ref={bottomRef} />
             </div>
 
             <div className="flex-none">
-                <ChatInput 
-                    input={input} 
-                    setInput={setInput} 
-                    onSend={sendMessage} 
-                    isLoading={isLoading} 
+                <ChatInput
+                    input={input}
+                    setInput={setInput}
+                    sendMessage={handleSendMessage}
+                    isLoading={isLoadingChat}
                 />
             </div>
         </div>
-    )
+    );
 }
