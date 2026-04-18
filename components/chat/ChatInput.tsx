@@ -28,7 +28,7 @@ export default function ChatInput({ input, setInput, sendMessage, isLoading }: P
                             }
                         }}
                         placeholder="TERMINAL_PROMPT..."
-                        className="w-full h-full p-2 lg:p-4 border-2 border-black font-mono text-xs lg:text-sm focus:outline-none resize-none bg-white brutalist-shadow-xs lg:brutalist-shadow-sm flex items-center"
+                        className="w-full h-full p-2 lg:p-4 border-2 border-black font-mono text-base lg:text-sm focus:outline-none resize-none bg-white brutalist-shadow-xs lg:brutalist-shadow-sm flex items-center"
                     />
                 </div>
                 <button 

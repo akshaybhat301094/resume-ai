@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import useUIStore from '@/lib/store';
+import { savePDFFile } from '@/lib/indexedDB';
 
 type Status = 'idle' | 'loading' | 'done' | 'error';
 
@@ -34,8 +35,14 @@ export default function ResumeUploader() {
             const data = await res.json();
 
             if (res.ok) {
-                const pdfUrl = URL.createObjectURL(file);
-                setResumeData(data.text, pdfUrl);
+                try {
+                    await savePDFFile(file);
+                    setResumeData(data.text, 'pdf-stored');
+                } catch (dbErr) {
+                    console.error('IndexedDB save error:', dbErr);
+                    setStatus('error');
+                    return;
+                }
                 clearChat();
                 clearAnalysis();
                 setStatus('done');
@@ -43,6 +50,7 @@ export default function ResumeUploader() {
                 setStatus('error');
             }
         } catch (err) {
+            console.error('Upload error:', err);
             setStatus('error');
         }
     }

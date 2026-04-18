@@ -17,7 +17,7 @@ export interface UIState {
   togglePreview: () => void;
   toggleAnalysis: () => void;
   setResumeData: (text: string, url: string) => void;
-  clearResumeData: () => void;
+  clearResumeData: () => Promise<void>;
   clearChat: () => void;
 }
 

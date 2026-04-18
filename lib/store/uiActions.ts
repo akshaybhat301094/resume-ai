@@ -1,4 +1,5 @@
 import { UIState } from '@/types/store';
+import { clearPDFFile } from '@/lib/indexedDB';
 
 export const createUIActions = (set: any): Partial<UIState> => ({
   setActiveTab: (tab) => set(() => ({ activeTab: tab })),
@@ -9,7 +10,10 @@ export const createUIActions = (set: any): Partial<UIState> => ({
 
   setResumeData: (text, url) => set(() => ({ resumeText: text, pdfUrl: url })),
 
-  clearResumeData: () => set(() => ({ resumeText: null, pdfUrl: null })),
+  clearResumeData: async () => {
+    await clearPDFFile();
+    set(() => ({ resumeText: null, pdfUrl: null }));
+  },
 
   clearChat: () => set({ messages: [] }),
 });

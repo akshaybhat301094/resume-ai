@@ -1,11 +1,28 @@
 'use client'
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import useUIStore from '@/lib/store';
+import { getPDFFile } from '@/lib/indexedDB';
 
 export default function ResumePreview() {
-    const { pdfUrl, resumeText, togglePreview } = useUIStore();
+    const { pdfUrl, resumeText, togglePreview, setResumeData } = useUIStore();
     const [scale, setScale] = useState(1);
+    const [displayUrl, setDisplayUrl] = useState<string | null>(null);
+
+    useEffect(() => {
+        if (pdfUrl === 'pdf-stored') {
+            getPDFFile().then((file) => {
+                if (file) {
+                    const url = URL.createObjectURL(file);
+                    setDisplayUrl(url);
+                }
+            });
+        } else if (pdfUrl) {
+            setDisplayUrl(pdfUrl);
+        } else {
+            setDisplayUrl(null);
+        }
+    }, [pdfUrl]);
 
     const zoomIn = () => setScale(prev => Math.min(prev + 0.25, 3));
     const zoomOut = () => setScale(prev => Math.max(prev - 0.25, 0.5));
@@ -24,7 +41,7 @@ export default function ResumePreview() {
                 </div>
                 <div className="flex items-center gap-4">
                     <span className="font-mono text-[7px] lg:text-[8px] font-bold text-gray-300 uppercase tracking-widest hidden sm:inline">
-                        {pdfUrl ? 'STREAM: LIVE' : 'STATUS: OFFLINE'}
+                        {displayUrl ? 'STREAM: LIVE' : 'STATUS: OFFLINE'}
                     </span>
                     <button 
                         onClick={togglePreview}
@@ -36,7 +53,7 @@ export default function ResumePreview() {
             </div>
 
             {/* Zoom Controls - Mobile only when PDF is shown */}
-            {pdfUrl && (
+            {displayUrl && (
                 <div className="lg:hidden flex items-center justify-center gap-2 py-2 px-4 border-b-2 border-black bg-white shrink-0">
                     <button 
                         onClick={zoomOut}
@@ -61,7 +78,7 @@ export default function ResumePreview() {
 
             {/* Content area */}
             <div className="flex-1 overflow-auto bg-[#F9F9F9]">
-                {pdfUrl ? (
+                {displayUrl ? (
                     <div 
                         className="w-full h-full overflow-auto lg:overflow-hidden"
                         style={{ 
@@ -81,7 +98,7 @@ export default function ResumePreview() {
                                 }}
                             >
                                 <iframe 
-                                    src={`${pdfUrl}#toolbar=0&navpanes=0&scrollbar=0&view=FitH`} 
+                                    src={`${displayUrl}#toolbar=0&navpanes=0&scrollbar=0&view=FitH`}
                                     className="w-full h-full border-none"
                                     title="Resume Preview"
                                     style={{ 
@@ -92,7 +109,7 @@ export default function ResumePreview() {
                             </div>
                         ) : (
                             <iframe 
-                                src={`${pdfUrl}#toolbar=0&navpanes=0&scrollbar=0&view=Fit`} 
+                                src={`${displayUrl}#toolbar=0&navpanes=0&scrollbar=0&view=Fit`}
                                 className="w-full h-full border-none"
                                 title="Resume Preview"
                                 style={{ 

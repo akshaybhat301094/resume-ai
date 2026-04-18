@@ -54,7 +54,7 @@ export default function ChatHeader({ onClearChat, isAnalysisOpen, onToggleAnalys
                     [CLEAR_LOG]
                 </button>
                 <button
-                    onClick={clearResumeData}
+                    onClick={() => clearResumeData()}
                     className="font-mono text-[10px] font-bold uppercase tracking-widest text-black/40 hover:text-[var(--accent)] hover:underline"
                 >
                     [NEW_RESUME]
@@ -64,13 +64,7 @@ export default function ChatHeader({ onClearChat, isAnalysisOpen, onToggleAnalys
             {/* Mobile Actions */}
             <div className="lg:hidden flex items-center gap-2">
                 <button
-                    onClick={onToggleAnalysis}
-                    className="px-2 py-1 bg-white border border-[var(--accent)] font-mono text-[8px] font-bold uppercase tracking-widest text-[var(--accent)] hover:bg-[var(--accent)] hover:text-white transition-all"
-                >
-                    ANALYSE
-                </button>
-                <button
-                    onClick={clearResumeData}
+                    onClick={() => clearResumeData()}
                     className="font-mono text-[8px] font-bold uppercase tracking-widest text-black/40"
                 >
                     [NEW]
