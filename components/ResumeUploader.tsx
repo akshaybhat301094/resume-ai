@@ -4,20 +4,13 @@ import { useState } from "react";
 import { saveResume, clearHistory } from '@/lib/localStorage';
 
 type Props = {
-    onResumeLoaded: (text: string) => void
+    onResumeLoaded: (text: string, pdfUrl: string) => void
 }
 
 type Status = 'idle' | 'loading' | 'done' | 'error';
 
-const enum STATUS {
-    ERROR = 'error',
-    LOADING = 'loading',
-    DONE = 'done',
-    IDLE = 'idle',
-}
-
 export default function ResumeUploader({ onResumeLoaded }: Props) {
-    const [status, setStatus] = useState<Status>(STATUS.IDLE);
+    const [status, setStatus] = useState<Status>('idle');
     const [fileName, setFileName] = useState<string>('');
 
     async function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
@@ -25,12 +18,12 @@ export default function ResumeUploader({ onResumeLoaded }: Props) {
         if (!file) return;
 
         if (file.type !== 'application/pdf') {
-            setStatus(STATUS.ERROR);
+            setStatus('error');
             return;
         }
 
         setFileName(file.name);
-        setStatus(STATUS.LOADING);
+        setStatus('loading');
 
         try {
             const formData = new FormData();
@@ -43,68 +36,63 @@ export default function ResumeUploader({ onResumeLoaded }: Props) {
 
             const data = await res.json();
 
-            if (!res.ok) throw new Error(data.error);
-
-            saveResume(data.text);
-            clearHistory();
-            onResumeLoaded(data.text);
-            setStatus(STATUS.DONE);
-
-        } catch (error) {
-            console.error(error);
-            setStatus(STATUS.ERROR);
+            if (res.ok) {
+                const pdfUrl = URL.createObjectURL(file);
+                saveResume(data.text);
+                clearHistory();
+                onResumeLoaded(data.text, pdfUrl);
+                setStatus('done');
+            } else {
+                setStatus('error');
+            }
+        } catch (err) {
+            setStatus('error');
         }
     }
 
     return (
-        <div className="brutalist-card p-1">
-            <div className="bg-[#F9F9F9] border-2 border-black p-8 sm:p-12 flex flex-col items-center gap-10">
-                <div className="space-y-4 w-full">
-                    <div className="flex justify-between items-center border-b-2 border-black pb-4">
-                        <span className="mono-label">FILE_INPUT</span>
-                        <span className="mono-label">TYPE: PDF</span>
+        <div className="space-y-6">
+            <div className="relative">
+                <input
+                    type="file"
+                    accept=".pdf"
+                    onChange={handleFileChange}
+                    className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                    disabled={status === 'loading'}
+                />
+                <div className={`
+                    border-2 border-dashed border-black p-8 text-center transition-all
+                    ${status === 'loading' ? 'bg-gray-50 opacity-50' : 'bg-white hover:bg-[#F9F9F9]'}
+                `}>
+                    <div className="space-y-4">
+                        <div className="flex justify-center">
+                            <svg className="w-12 h-12 text-black" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                            </svg>
+                        </div>
+                        <div>
+                            <p className="font-display font-black text-xl uppercase tracking-tighter">
+                                {status === 'loading' ? 'Ingesting_Manuscript...' : fileName || 'Register_Resume_File'}
+                            </p>
+                            <p className="font-mono text-[10px] uppercase font-bold text-gray-400 mt-1">
+                                [ PDF_STREAM_ONLY_SUPPORTED ]
+                            </p>
+                        </div>
                     </div>
                 </div>
-
-                <div className="flex flex-col items-center gap-6 text-center">
-                    <div className="w-16 h-16 brutalist-border bg-white flex items-center justify-center brutalist-shadow-sm">
-                        <span className="text-3xl">■</span>
-                    </div>
-                    
-                    <div className="space-y-2">
-                        <h3 className="font-display font-black text-2xl uppercase tracking-tighter">
-                            {status === STATUS.LOADING ? 'PROCESSING_DATA' : 'LOAD_RESUME'}
-                        </h3>
-                        <p className="font-mono text-[10px] font-bold text-gray-400 uppercase">
-                            {fileName || 'SELECT_MANUSCRIPT_TO_BEGIN'}
-                        </p>
-                    </div>
-                </div>
-
-                <label className={`brutalist-button-primary w-full text-center flex items-center justify-center gap-2 ${
-                    status === STATUS.LOADING ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'
-                }`}>
-                    {status === STATUS.LOADING ? (
-                        <span className="flex items-center gap-2">
-                            <span className="animate-spin text-xl">◌</span>
-                            INGESTING
-                        </span>
-                    ) : 'FIND_FILE'}
-                    <input 
-                        type="file" 
-                        accept=".pdf" 
-                        onChange={handleFileChange} 
-                        className="hidden" 
-                        disabled={status === STATUS.LOADING}
-                    />
-                </label>
-
-                {status === STATUS.ERROR && (
-                    <div className="bg-black text-white px-4 py-2 font-mono text-[10px] brutalist-shadow-sm w-full text-center">
-                        ALARM: EXTRACTION_FAILURE. RETRY_REQUIRED.
-                    </div>
-                )}
             </div>
+
+            {status === 'error' && (
+                <div className="bg-black text-white p-4 font-mono text-[10px] font-bold uppercase tracking-widest brutalist-shadow">
+                    ERROR: UPLINK_FAILURE. PLEASE_VERIFY_FILE_INTEGRITY.
+                </div>
+            )}
+
+            {status === 'done' && (
+                <div className="bg-[#003BFF] text-white p-4 font-mono text-[10px] font-bold uppercase tracking-widest brutalist-shadow">
+                    SIGNAL: INGESTION_SUCCESSFUL. DATA_READY_FOR_PROCESSING.
+                </div>
+            )}
         </div>
-    )
+    );
 }

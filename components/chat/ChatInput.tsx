@@ -2,44 +2,42 @@
 
 type Props = {
     input: string
-    setInput: (value: string) => void
+    setInput: (val: string) => void
     onSend: () => void
     isLoading: boolean
 }
 
 export default function ChatInput({ input, setInput, onSend, isLoading }: Props) {
-    const handleKeyDown = (e: React.KeyboardEvent) => {
-        if (e.key === 'Enter' && !e.shiftKey) {
-            e.preventDefault()
-            onSend()
-        }
-    }
-
     return (
-        <div className="px-8 py-8 bg-white border-t-2 border-black">
-            <div className="flex gap-4 items-end">
-                <div className="flex-1 relative">
-                    <textarea
+        <div className="px-4 lg:px-8 py-6 lg:py-8 bg-white border-t-2 border-black bg-[radial-gradient(#F0F0F0_1px,transparent_1px)] bg-[length:16px_16px]">
+            <div className="flex gap-2 lg:gap-4 items-center h-[48px] lg:h-[56px]">
+                <div className="flex-1 h-full relative">
+                    <div className="absolute -top-5 lg:-top-6 left-0 font-mono text-[7px] lg:text-[8px] font-bold text-gray-400 uppercase tracking-widest pointer-events-none">
+                        SIGNAL_STREAM [{input.length}]
+                    </div>
+                    <textarea 
                         value={input}
-                        onChange={e => setInput(e.target.value)}
-                        onKeyDown={handleKeyDown}
-                        placeholder="OPERATOR_QUERY_INPUT..."
-                        rows={1}
-                        className="w-full bg-[#F9F9F9] brutalist-border px-6 py-4 text-sm font-mono
-                                 placeholder:text-gray-300 focus:bg-white transition-colors"
+                        onChange={(e) => setInput(e.target.value)}
+                        onKeyDown={(e) => {
+                            if (e.key === 'Enter' && !e.shiftKey) {
+                                e.preventDefault()
+                                onSend()
+                            }
+                        }}
+                        placeholder="TERMINAL_PROMPT..."
+                        className="w-full h-full p-2 lg:p-4 border-2 border-black font-mono text-xs lg:text-sm focus:outline-none resize-none bg-white brutalist-shadow-xs lg:brutalist-shadow-sm flex items-center"
                     />
                 </div>
-                <button
+                <button 
                     onClick={onSend}
-                    disabled={!input.trim() || isLoading}
-                    className="brutalist-button-primary h-[54px] flex items-center justify-center px-8"
+                    disabled={isLoading || !input.trim()}
+                    className="brutalist-button-primary px-3 lg:px-8 flex items-center gap-2 h-full relative group overflow-hidden shrink-0"
                 >
-                    SEND_SIGNAL
+                    <span className="relative z-10 text-[10px] lg:text-sm font-black uppercase tracking-tighter">
+                        {isLoading ? '...' : 'SEND'}
+                    </span>
+                    {!isLoading && <span className="relative z-10 text-xs hidden sm:inline">→</span>}
                 </button>
-            </div>
-            <div className="flex justify-between mt-4 font-mono text-[8px] text-gray-400 uppercase tracking-[.3em]">
-                <span>LINK_ESTABLISHED: OPENAI_GPT_4O</span>
-                <span>SHIFT+ENTER: NEWLINE</span>
             </div>
         </div>
     )

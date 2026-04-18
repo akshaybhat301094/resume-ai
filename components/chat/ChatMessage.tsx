@@ -2,7 +2,7 @@
 
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
-import { Message } from '@/lib/localStorage'
+import { Message } from '@/types/chat'
 
 type Props = {
     message: Message
@@ -35,20 +35,12 @@ export default function ChatMessage({ message, isLoading, isLast }: Props) {
                             h2: ({ children }) => <h2 className="font-display font-bold text-lg uppercase mb-3 flex items-center gap-2"><span className="text-[10px]">■</span> {children}</h2>,
                             h3: ({ children }) => <h3 className="font-mono font-bold text-sm uppercase mb-2 flex items-center gap-2 underline">{children}</h3>,
                             p: ({ children }) => <p className="mb-4 last:mb-0 leading-relaxed">{children}</p>,
-                            ul: ({ children }) => <ul className="space-y-2 mb-4 ml-2">{children}</ul>,
+                            ul: ({ children }) => <ul className="brutalist-ul">{children}</ul>,
                             ol: ({ children }) => <ol className="list-decimal ml-6 space-y-2 mb-4 font-mono text-xs">{children}</ol>,
-                            li: ({ children, ...props }) => {
-                                const isOrdered = typeof (props as any).index === 'number';
-                                return (
-                                    <li className="flex items-start gap-3">
-                                        {!isOrdered && <span className="mt-1.5 text-[8px]">■</span>}
-                                        <span>{children}</span>
-                                    </li>
-                                );
-                            },
+                            li: ({ children }) => <li className="brutalist-li">{children}</li>,
                             code: ({ children }) => <code className="bg-gray-100 px-1.5 py-0.5 brutalist-border-sm font-mono text-xs">{children}</code>,
                             pre: ({ children }) => <pre className="bg-[#F9F9F9] brutalist-border p-4 my-4 font-mono text-xs overflow-x-auto brutalist-shadow-sm">{children}</pre>,
-                            a: ({ children, href }) => <a href={href} target="_blank" rel="noopener noreferrer" className="text-[#003BFF] font-bold hover:underline">{children}</a>,
+                            a: ({ children, href }) => <a href={href} target="_blank" rel="noopener noreferrer" className="text-[var(--accent)] font-bold hover:underline">{children}</a>,
                             hr: () => <hr className="border-t-2 border-black my-6" />,
                             table: ({ children }) => <div className="overflow-x-auto my-6"><table className="w-full brutalist-border text-xs">{children}</table></div>,
                             th: ({ children }) => <th className="bg-black text-white font-mono uppercase p-2 border-r border-white last:border-0">{children}</th>,

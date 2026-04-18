@@ -1,7 +1,8 @@
 'use client'
 
 import { useState, useRef, useEffect } from 'react'
-import { Message, saveHistory, getHistory } from '@/lib/localStorage'
+import { Message } from '@/types/chat'
+import { saveHistory, getHistory, clearHistory } from '@/lib/localStorage'
 import ChatHeader from './ChatHeader'
 import ChatMessage from './ChatMessage'
 import ChatInput from './ChatInput'
@@ -11,9 +12,18 @@ type Props = {
     onClearResume: () => void
     isAnalysisOpen: boolean
     onToggleAnalysis: () => void
+    isPreviewOpen: boolean
+    onTogglePreview: () => void
 }
 
-export default function ChatPanel({ resumeText, onClearResume, isAnalysisOpen, onToggleAnalysis }: Props) {
+export default function ChatPanel({ 
+    resumeText, 
+    onClearResume, 
+    isAnalysisOpen, 
+    onToggleAnalysis,
+    isPreviewOpen,
+    onTogglePreview
+}: Props) {
     const [messages, setMessages] = useState<Message[]>(() => getHistory())
     const [input, setInput] = useState('')
     const [isLoading, setIsLoading] = useState(false)
@@ -92,7 +102,7 @@ export default function ChatPanel({ resumeText, onClearResume, isAnalysisOpen, o
 
     const clearChat = () => {
         setMessages([])
-        localStorage.removeItem('resume_ai_history')
+        clearHistory()
     }
 
     return (
@@ -103,6 +113,8 @@ export default function ChatPanel({ resumeText, onClearResume, isAnalysisOpen, o
                     onClearResume={onClearResume}
                     isAnalysisOpen={isAnalysisOpen}
                     onToggleAnalysis={onToggleAnalysis}
+                    isPreviewOpen={isPreviewOpen}
+                    onTogglePreview={onTogglePreview}
                 />
             </div>
 
