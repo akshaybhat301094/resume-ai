@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { PDFParse } from 'pdf-parse';
+import pdfParse from 'pdf-parse';
 
 export async function POST(req: NextRequest) {
   try {
@@ -14,18 +14,12 @@ export async function POST(req: NextRequest) {
     const arrayBuffer = await file.arrayBuffer();
     const buffer = Buffer.from(arrayBuffer);
 
-    // Initialize the parser with the buffer
-    const parser = new PDFParse({ data: buffer });
-    
-    // Extract text
-    const result = await parser.getText();
-    
-    // Cleanup resources
-    await parser.destroy();
+    // Parse PDF using pdf-parse v1.x API
+    const result = await pdfParse(buffer);
 
     return NextResponse.json({
       text: result.text,
-      pages: result.total,
+      pages: result.numpages,
     });
   } catch (error: any) {
     console.error('PDF parsing error:', error);
