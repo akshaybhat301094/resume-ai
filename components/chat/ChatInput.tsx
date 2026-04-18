@@ -1,13 +1,16 @@
 'use client'
 
+import { ReactNode } from 'react'
+
 type Props = {
     input: string
     setInput: (val: string) => void
     sendMessage: () => void // Renamed from onSend to sendMessage for consistency
     isLoading: boolean
+    voiceButton?: ReactNode
 }
 
-export default function ChatInput({ input, setInput, sendMessage, isLoading }: Props) {
+export default function ChatInput({ input, setInput, sendMessage, isLoading, voiceButton }: Props) {
     return (
         <div 
             className="px-4 lg:px-8 py-4 lg:py-8 bg-white border-t-2 border-black bg-[radial-gradient(#F0F0F0_1px,transparent_1px)] bg-[length:16px_16px] shrink-0"
@@ -31,6 +34,7 @@ export default function ChatInput({ input, setInput, sendMessage, isLoading }: P
                         className="w-full h-full p-2 lg:p-4 border-2 border-black font-mono text-base lg:text-sm focus:outline-none resize-none bg-white brutalist-shadow-xs lg:brutalist-shadow-sm flex items-center"
                     />
                 </div>
+                {voiceButton}
                 <button 
                     onClick={sendMessage}
                     disabled={isLoading || !input.trim()}

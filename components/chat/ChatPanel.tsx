@@ -1,11 +1,13 @@
 'use client'
 
-import { useState, useRef, useEffect } from 'react'
+import { useState, useRef, useEffect, useCallback } from 'react'
 import { saveHistory } from '@/lib/localStorage'
 import ChatHeader from './ChatHeader'
 import ChatMessage from './ChatMessage'
 import ChatInput from './ChatInput'
+import VoiceButton from './VoiceButton'
 import useUIStore from '@/lib/store';
+import { Message } from '@/types/store';
 
 export default function ChatPanel() {
     const {
@@ -22,6 +24,9 @@ export default function ChatPanel() {
 
     const [input, setInput] = useState('');
     const bottomRef = useRef<HTMLDivElement>(null);
+    const isStreamingAssistantRef = useRef(false);
+    const awaitingUserTranscriptRef = useRef(true);
+    const pendingAssistantDeltaRef = useRef('');
 
     // Auto-scroll to bottom when messages change
     useEffect(() => {
@@ -39,6 +44,75 @@ export default function ChatPanel() {
         await sendMessage(input, resumeText);
         setInput('');
     }
+
+    const appendMessage = useCallback((message: Message) => {
+        useUIStore.setState((state) => ({
+            messages: [...state.messages, message],
+        }));
+    }, []);
+
+    const handleVoiceTranscript = useCallback((text: string) => {
+        const transcript = text.trim();
+        if (!transcript) return;
+
+        appendMessage({ role: 'user', content: transcript });
+        awaitingUserTranscriptRef.current = false;
+
+        if (pendingAssistantDeltaRef.current) {
+            appendMessage({ role: 'assistant', content: pendingAssistantDeltaRef.current });
+            pendingAssistantDeltaRef.current = '';
+            isStreamingAssistantRef.current = true;
+            return;
+        }
+
+        isStreamingAssistantRef.current = false;
+    }, [appendMessage]);
+
+    const handleAssistantVoiceDelta = useCallback((delta: string) => {
+        if (!delta) return;
+
+        if (awaitingUserTranscriptRef.current) {
+            pendingAssistantDeltaRef.current += delta;
+            return;
+        }
+
+        useUIStore.setState((state) => {
+            const updated = [...state.messages];
+
+            if (!isStreamingAssistantRef.current) {
+                updated.push({ role: 'assistant', content: delta });
+                isStreamingAssistantRef.current = true;
+                return { messages: updated };
+            }
+
+            const lastIndex = updated.length - 1;
+            const last = updated[lastIndex];
+            if (!last || last.role !== 'assistant') {
+                updated.push({ role: 'assistant', content: delta });
+                return { messages: updated };
+            }
+
+            updated[lastIndex] = {
+                ...last,
+                content: `${last.content}${delta}`,
+            };
+
+            return { messages: updated };
+        });
+    }, []);
+
+    const handleAssistantVoiceDone = useCallback(() => {
+        isStreamingAssistantRef.current = false;
+        awaitingUserTranscriptRef.current = true;
+        pendingAssistantDeltaRef.current = '';
+    }, []);
+
+    const handleUserSpeechStarted = useCallback(() => {
+        // Start of a new user turn; force assistant stream state reset even if done event lags.
+        isStreamingAssistantRef.current = false;
+        awaitingUserTranscriptRef.current = true;
+        pendingAssistantDeltaRef.current = '';
+    }, []);
 
     return (
         <div className="flex flex-col h-full grow w-full bg-white relative">
@@ -103,6 +177,18 @@ export default function ChatPanel() {
                     setInput={setInput}
                     sendMessage={handleSendMessage}
                     isLoading={isLoadingChat}
+                    voiceButton={
+                        resumeText ? (
+                            <VoiceButton
+                                resumeText={resumeText}
+                                disabled={isLoadingChat}
+                                onTranscript={handleVoiceTranscript}
+                                onAssistantMessage={handleAssistantVoiceDelta}
+                                onAssistantDone={handleAssistantVoiceDone}
+                                onUserSpeechStarted={handleUserSpeechStarted}
+                            />
+                        ) : undefined
+                    }
                 />
             </div>
         </div>
