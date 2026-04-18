@@ -17,7 +17,7 @@ export default function ImprovementPanel() {
   };
 
   return (
-    <div className="w-full flex flex-col h-full bg-white overflow-y-auto">
+    <div className="w-full flex flex-col h-full bg-white overflow-hidden">
       <AnalysisHeader
         hasAnalysis={!!analysis}
         isLoading={isLoadingAnalysis}
@@ -25,7 +25,10 @@ export default function ImprovementPanel() {
         onClose={toggleAnalysis}
       />
 
-      <div className="p-6 space-y-8 brutalist-dot-grid flex-1">
+      <div 
+        className="p-4 lg:p-6 space-y-6 lg:space-y-8 brutalist-dot-grid flex-1 overflow-y-auto"
+        style={{ WebkitOverflowScrolling: 'touch' }}
+      >
         {!analysis && !isLoadingAnalysis && (
           <AnalysisEmptyState onRunAnalysis={handleRunAnalysis} error={error} />
         )}

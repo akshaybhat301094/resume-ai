@@ -3,10 +3,6 @@ import { handleAnalysis } from './analysisService';
 
 export const createAnalysisActions = (set: any, get: any): Partial<AnalysisState> => ({
   runAnalysis: async (resumeText) => {
-    if (!get().isAnalysisOpen) {
-      set({ isLoadingAnalysis: false });
-      return;
-    }
 
     set({ isLoadingAnalysis: true, error: null });
 

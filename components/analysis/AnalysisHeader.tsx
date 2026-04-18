@@ -9,7 +9,10 @@ type Props = {
 
 export default function AnalysisHeader({ hasAnalysis, isLoading, onRunAnalysis, onClose }: Props) {
     return (
-        <div className="px-4 lg:px-8 py-4 lg:py-6 border-b-2 border-black bg-white flex justify-between items-center sticky top-0 z-10 h-auto lg:h-[88px]">
+        <div 
+            className="px-4 lg:px-8 py-4 lg:py-6 border-b-2 border-black bg-white flex justify-between items-center shrink-0 z-10 h-auto lg:h-[88px]"
+            style={{ paddingTop: 'max(1rem, env(safe-area-inset-top, 1rem))' }}
+        >
             <div className="flex items-center gap-2 lg:gap-3">
                 <div className="w-6 h-6 lg:w-8 lg:h-8 bg-[var(--accent)] flex items-center justify-center font-display font-black text-white text-sm lg:text-xl">A</div>
                 <h2 className="font-display font-black text-lg lg:text-2xl uppercase tracking-tighter">Analysis</h2>

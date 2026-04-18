@@ -14,7 +14,10 @@ export default function ChatHeader({ onClearChat, isAnalysisOpen, onToggleAnalys
     const { clearResumeData } = useUIStore();
 
     return (
-        <div className="flex items-center justify-between px-4 lg:px-8 py-4 lg:py-6 border-b-2 border-black bg-white h-auto lg:h-[88px]">
+        <div 
+            className="flex items-center justify-between px-4 lg:px-8 py-4 lg:py-6 border-b-2 border-black bg-white h-auto lg:h-[88px] shrink-0"
+            style={{ paddingTop: 'max(1rem, env(safe-area-inset-top, 1rem))' }}
+        >
             <div className="flex items-center gap-2 lg:gap-3">
                 <div className="w-6 h-6 lg:w-8 lg:h-8 bg-black flex items-center justify-center font-display font-black text-white text-sm lg:text-xl">C</div>
                 <h1 className="font-display font-black text-lg lg:text-2xl uppercase tracking-tighter text-black">Console</h1>
@@ -59,10 +62,16 @@ export default function ChatHeader({ onClearChat, isAnalysisOpen, onToggleAnalys
             </div>
 
             {/* Mobile Actions */}
-            <div className="lg:hidden flex items-center gap-4">
-                 <button
+            <div className="lg:hidden flex items-center gap-2">
+                <button
+                    onClick={onToggleAnalysis}
+                    className="px-2 py-1 bg-white border border-[var(--accent)] font-mono text-[8px] font-bold uppercase tracking-widest text-[var(--accent)] hover:bg-[var(--accent)] hover:text-white transition-all"
+                >
+                    ANALYSE
+                </button>
+                <button
                     onClick={clearResumeData}
-                    className="font-mono text-[10px] font-bold uppercase tracking-widest text-black/40"
+                    className="font-mono text-[8px] font-bold uppercase tracking-widest text-black/40"
                 >
                     [NEW]
                 </button>

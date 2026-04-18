@@ -9,8 +9,11 @@ type Props = {
 
 export default function ChatInput({ input, setInput, sendMessage, isLoading }: Props) {
     return (
-        <div className="px-4 lg:px-8 py-6 lg:py-8 bg-white border-t-2 border-black bg-[radial-gradient(#F0F0F0_1px,transparent_1px)] bg-[length:16px_16px]">
-            <div className="flex gap-2 lg:gap-4 items-center h-[48px] lg:h-[56px]">
+        <div 
+            className="px-4 lg:px-8 py-4 lg:py-8 bg-white border-t-2 border-black bg-[radial-gradient(#F0F0F0_1px,transparent_1px)] bg-[length:16px_16px] shrink-0"
+            style={{ paddingBottom: 'max(1rem, env(safe-area-inset-bottom, 1rem))' }}
+        >
+            <div className="flex gap-2 lg:gap-4 items-center h-[44px] lg:h-[56px]">
                 <div className="flex-1 h-full relative">
                     <div className="absolute -top-5 lg:-top-6 left-0 font-mono text-[7px] lg:text-[8px] font-bold text-gray-400 uppercase tracking-widest pointer-events-none">
                         SIGNAL_STREAM [{input.length}]

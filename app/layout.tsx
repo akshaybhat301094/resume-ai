@@ -21,6 +21,14 @@ const spaceMono = Space_Mono({
 export const metadata: Metadata = {
   title: "TRANSIT | Resume AI",
   description: "Modern Brutalist Resume Analysis",
+  viewport: {
+    width: 'device-width',
+    initialScale: 1,
+    maximumScale: 5,
+    minimumScale: 1,
+    userScalable: true,
+    viewportFit: 'cover',
+  },
 };
 
 export default function RootLayout({
@@ -33,7 +41,7 @@ export default function RootLayout({
       lang="en"
       className={`${inter.variable} ${spaceGrotesk.variable} ${spaceMono.variable} h-full antialiased`}
     >
-      <body className="h-screen overflow-hidden flex flex-col bg-[#F9F9F9]">
+      <body className="h-[100dvh] overflow-hidden flex flex-col bg-[#F9F9F9]">
         {children}
       </body>
     </html>

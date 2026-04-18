@@ -14,7 +14,7 @@ export default function WorkspaceLayout() {
     } = useUIStore();
 
     return (
-        <div className="flex-1 flex flex-col lg:flex-row overflow-hidden relative">
+        <div className="flex-1 flex flex-col lg:flex-row overflow-hidden relative pb-[max(0px,env(safe-area-inset-bottom))]">
 
             {/* Resume Preview Panel */}
             <div className={`transition-all duration-300 ease-in-out bg-white overflow-hidden shrink-0 flex-col

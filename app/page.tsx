@@ -10,7 +10,7 @@ export default function Home() {
 
     return (
         <ErrorBoundary>
-            <main className="h-screen flex flex-col bg-[#F9F9F9] overflow-hidden uppercase font-sans">
+            <main className="h-[100dvh] flex flex-col bg-[#F9F9F9] overflow-hidden uppercase font-sans">
                 {!resumeText ? (
                     <LandingPage />
                 ) : (

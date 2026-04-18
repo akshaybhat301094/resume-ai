@@ -52,12 +52,15 @@ export default function ChatPanel() {
                 />
             </div>
 
-            <div className="flex-1 overflow-y-auto px-8 py-10 space-y-8 bg-[#F9F9F9] bg-[radial-gradient(#E0E0E0_1px,transparent_1px)] bg-[length:20px_20px]">
+            <div 
+                className="flex-1 overflow-y-auto px-4 lg:px-8 py-6 lg:py-10 space-y-6 lg:space-y-8 bg-[#F9F9F9] bg-[radial-gradient(#E0E0E0_1px,transparent_1px)] bg-[length:20px_20px]"
+                style={{ WebkitOverflowScrolling: 'touch' }}
+            >
                 {messages.length === 0 && (
-                    <div className="max-w-xl mx-auto space-y-10 mt-12">
+                    <div className="max-w-xl mx-auto space-y-6 lg:space-y-10 mt-6 lg:mt-12 px-4 lg:px-0">
                         <div className="space-y-4">
-                            <div className="bg-black text-white px-2 py-1 inline-block font-mono text-[10px] font-bold">READY_FOR_INPUT</div>
-                            <p className="font-display font-black text-4xl uppercase tracking-tighter leading-none">
+                            <div className="bg-black text-white px-2 py-1 inline-block font-mono text-[8px] lg:text-[10px] font-bold">READY_FOR_INPUT</div>
+                            <p className="font-display font-black text-2xl lg:text-4xl uppercase tracking-tighter leading-none">
                                 Resume ingest complete. Select a signal protocol below or type your query.
                             </p>
                         </div>
